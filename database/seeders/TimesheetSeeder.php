@@ -21,6 +21,5 @@ class TimesheetSeeder extends Seeder
             'date' => now()->toDateString(),
             'hours' => 8,
         ]);
-        // Tambahkan data timesheet lain sesuai kebutuhan
     }
 }
