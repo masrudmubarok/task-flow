@@ -13,8 +13,6 @@ class CreateAttributeValuesTable extends Migration
             $table->foreignId('attribute_id')->constrained()->onDelete('cascade');
             $table->unsignedBigInteger('entity_id');
             $table->string('value');
-            $table->string('entity_type');
-            $table->index(['entity_id', 'entity_type']);
             $table->timestamps();
         });
     }
