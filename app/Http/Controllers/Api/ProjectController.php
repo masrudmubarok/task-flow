@@ -3,16 +3,18 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Project\StoreProjectRequest;
+use App\Http\Requests\Project\UpdateProjectRequest;
 use App\Models\Project;
 use App\Models\AttributeValue;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class ProjectController extends Controller
 {
     public function index()
     {
-        $projects = Project::with('attributeValues')->get();
+        $projects = Project::with('attributeValues')->paginate(10);
         return response()->json($projects);
     }
 
@@ -22,61 +24,70 @@ class ProjectController extends Controller
         return response()->json($project);
     }
 
-    public function store(Request $request)
+    public function store(StoreProjectRequest $request)
     {
-        $validator = Validator::make($request->all(), [
-            'name' => 'required|string|max:255',
-            'status' => 'nullable|string|max:255',
-        ]);
+        DB::beginTransaction();
+        try {
+            $project = Project::create($request->only('name', 'status'));
 
-        if ($validator->fails()) {
-            return response()->json(['errors' => $validator->errors()], 422);
-        }
-
-        $project = Project::create($request->all());
-
-        if ($request->has('attributes')) {
-            foreach ($request->attributes as $attributeData) {
-                $attributeValue = new AttributeValue();
-                $attributeValue->attribute_id = $attributeData['attribute_id'];
-                $attributeValue->value = $attributeData['value'];
-                $project->attributeValues()->save($attributeValue);
+            if ($request->has('attributes')) {
+                foreach ($request->attributes as $attributeData) {
+                    AttributeValue::create([
+                        'project_id' => $project->id,
+                        'attribute_id' => $attributeData['attribute_id'],
+                        'value' => $attributeData['value'],
+                    ]);
+                }
             }
-        }
 
-        return response()->json($project, 201);
+            DB::commit();
+            return response()->json($project, 201);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error('Project Store Error: ' . $e->getMessage());
+            return response()->json(['message' => 'Internal Server Error'], 500);
+        }
     }
 
-    public function update(Request $request, Project $project)
+    public function update(UpdateProjectRequest $request, Project $project)
     {
-        $validator = Validator::make($request->all(), [
-            'name' => 'string|max:255',
-            'status' => 'nullable|string|max:255',
-        ]);
+        DB::beginTransaction();
+        try {
+            $project->update($request->only('name', 'status'));
 
-        if ($validator->fails()) {
-            return response()->json(['errors' => $validator->errors()], 422);
-        }
+            if ($request->has('attributes')) {
+                $project->attributeValues()->delete(); // Hapus atribut lama
 
-        $project->update($request->all());
-
-        if ($request->has('attributes')) {
-            $project->attributeValues()->delete();
-            foreach ($request->attributes as $attributeData) {
-                $attributeValue = new AttributeValue();
-                $attributeValue->attribute_id = $attributeData['attribute_id'];
-                $attributeValue->value = $attributeData['value'];
-                $project->attributeValues()->save($attributeValue);
+                foreach ($request->attributes as $attributeData) {
+                    AttributeValue::create([
+                        'project_id' => $project->id,
+                        'attribute_id' => $attributeData['attribute_id'],
+                        'value' => $attributeData['value'],
+                    ]);
+                }
             }
-        }
 
-        return response()->json($project);
+            DB::commit();
+            return response()->json($project);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error('Project Update Error: ' . $e->getMessage());
+            return response()->json(['message' => 'Internal Server Error'], 500);
+        }
     }
 
     public function destroy(Project $project)
     {
-        $project->delete();
-        return response()->json(null, 204);
+        DB::beginTransaction();
+        try {
+            $project->delete();
+            DB::commit();
+            return response()->json(null, 204);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error('Project Delete Error: ' . $e->getMessage());
+            return response()->json(['message' => 'Internal Server Error'], 500);
+        }
     }
 
     public function filter(Request $request)
@@ -92,7 +103,12 @@ class ProjectController extends Controller
         }
 
         if ($request->has('start_date') && $request->has('end_date')) {
-            $query->whereBetween('created_at', [$request->start_date, $request->end_date]);
+            $startDate = date('Y-m-d', strtotime($request->start_date));
+            $endDate = date('Y-m-d', strtotime($request->end_date));
+
+            if ($startDate <= $endDate) {
+                $query->whereBetween('created_at', [$startDate, $endDate]);
+            }
         }
 
         if ($request->has('department')) {
@@ -104,8 +120,12 @@ class ProjectController extends Controller
             });
         }
 
-        if ($request->has('sort_by') && $request->has('sort_order')) {
-            $query->orderBy($request->sort_by, $request->sort_order);
+        if ($request->has('sort_by')) {
+            $sortOrder = $request->get('sort_order', 'asc');
+            if (!in_array($sortOrder, ['asc', 'desc'])) {
+                $sortOrder = 'asc';
+            }
+            $query->orderBy($request->sort_by, $sortOrder);
         }
 
         $projects = $query->paginate(10);

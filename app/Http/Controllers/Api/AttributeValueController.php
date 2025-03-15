@@ -3,59 +3,63 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\StoreAttributeValueRequest;
+use App\Http\Requests\UpdateAttributeValueRequest;
 use App\Models\AttributeValue;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Log;
 
 class AttributeValueController extends Controller
 {
-    public function index()
+    public function index(): JsonResponse
     {
-        return response()->json(AttributeValue::all());
+        return response()->json(AttributeValue::paginate(10)); // ✅ Gunakan pagination
     }
 
-    public function show(AttributeValue $attributeValue)
+    public function show(AttributeValue $attributeValue): JsonResponse
     {
         return response()->json($attributeValue);
     }
 
-    public function store(Request $request)
+    public function store(StoreAttributeValueRequest $request): JsonResponse
     {
-        $validator = Validator::make($request->all(), [
-            'attribute_id' => 'required|exists:attributes,id',
-            'entity_id' => 'required|integer',
-            'entity_type' => 'required|string',
-            'value' => 'required|string',
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json(['errors' => $validator->errors()], 422);
+        try {
+            $attributeValue = AttributeValue::create($request->validated());
+            return response()->json($attributeValue, 201);
+        } catch (\Exception $e) {
+            Log::error('Error storing attribute value: ' . $e->getMessage());
+            return response()->json([
+                'message' => 'Something went wrong',
+                'error' => $e->getMessage(),
+            ], 500);
         }
-
-        $attributeValue = AttributeValue::create($request->all());
-        return response()->json($attributeValue, 201);
     }
 
-    public function update(Request $request, AttributeValue $attributeValue)
+    public function update(UpdateAttributeValueRequest $request, AttributeValue $attributeValue): JsonResponse
     {
-        $validator = Validator::make($request->all(), [
-            'attribute_id' => 'exists:attributes,id',
-            'entity_id' => 'integer',
-            'entity_type' => 'string',
-            'value' => 'string',
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json(['errors' => $validator->errors()], 422);
+        try {
+            $attributeValue->update($request->validated());
+            return response()->json($attributeValue);
+        } catch (\Exception $e) {
+            Log::error('Error updating attribute value: ' . $e->getMessage());
+            return response()->json([
+                'message' => 'Something went wrong',
+                'error' => $e->getMessage(),
+            ], 500);
         }
-
-        $attributeValue->update($request->all());
-        return response()->json($attributeValue);
     }
 
-    public function destroy(AttributeValue $attributeValue)
+    public function destroy(AttributeValue $attributeValue): JsonResponse
     {
-        $attributeValue->delete();
-        return response()->json(null, 204);
+        try {
+            $attributeValue->delete();
+            return response()->json(null, 204);
+        } catch (\Exception $e) {
+            Log::error('Error deleting attribute value: ' . $e->getMessage());
+            return response()->json([
+                'message' => 'Failed to delete attribute value',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
     }
 }

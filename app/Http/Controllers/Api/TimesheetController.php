@@ -3,15 +3,18 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Timesheet\StoreTimesheetRequest;
+use App\Http\Requests\Timesheet\UpdateTimesheetRequest;
 use App\Models\Timesheet;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class TimesheetController extends Controller
 {
     public function index()
     {
-        return response()->json(Timesheet::all());
+        $timesheets = Timesheet::paginate(10); // Menggunakan pagination agar lebih efisien
+        return response()->json($timesheets);
     }
 
     public function show(Timesheet $timesheet)
@@ -19,45 +22,60 @@ class TimesheetController extends Controller
         return response()->json($timesheet);
     }
 
-    public function store(Request $request)
+    public function store(StoreTimesheetRequest $request)
     {
-        $validator = Validator::make($request->all(), [
-            'user_id' => 'required|exists:users,id',
-            'project_id' => 'required|exists:projects,id',
-            'task_name' => 'required|string|max:255',
-            'date' => 'required|date',
-            'hours' => 'required|integer',
-        ]);
+        DB::beginTransaction();
+        try {
+            $timesheet = Timesheet::create($request->validated());
 
-        if ($validator->fails()) {
-            return response()->json(['errors' => $validator->errors()], 422);
+            DB::commit();
+            return response()->json($timesheet, 201);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error('Timesheet Store Error: ' . $e->getMessage());
+
+            return response()->json([
+                'message' => 'Internal Server Error',
+                'error' => $e->getMessage(),
+            ], 500);
         }
-
-        $timesheet = Timesheet::create($request->all());
-        return response()->json($timesheet, 201);
     }
 
-    public function update(Request $request, Timesheet $timesheet)
+    public function update(UpdateTimesheetRequest $request, Timesheet $timesheet)
     {
-        $validator = Validator::make($request->all(), [
-            'user_id' => 'exists:users,id',
-            'project_id' => 'exists:projects,id',
-            'task_name' => 'string|max:255',
-            'date' => 'date',
-            'hours' => 'integer',
-        ]);
+        DB::beginTransaction();
+        try {
+            $timesheet->update($request->validated());
 
-        if ($validator->fails()) {
-            return response()->json(['errors' => $validator->errors()], 422);
+            DB::commit();
+            return response()->json($timesheet);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error('Timesheet Update Error: ' . $e->getMessage());
+
+            return response()->json([
+                'message' => 'Internal Server Error',
+                'error' => $e->getMessage(),
+            ], 500);
         }
-
-        $timesheet->update($request->all());
-        return response()->json($timesheet);
     }
 
     public function destroy(Timesheet $timesheet)
     {
-        $timesheet->delete();
-        return response()->json(null, 204);
+        DB::beginTransaction();
+        try {
+            $timesheet->delete();
+
+            DB::commit();
+            return response()->json(null, 204);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error('Timesheet Delete Error: ' . $e->getMessage());
+
+            return response()->json([
+                'message' => 'Internal Server Error',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
     }
 }
