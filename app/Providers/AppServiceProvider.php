@@ -11,7 +11,6 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        // Mengikat interface ke implementasi
         // $this->app->bind(
         //     'App\Interfaces\ExampleInterface',
         //     'App\Repositories\ExampleRepository'
@@ -23,10 +22,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        // Mengatur locale aplikasi
         // app()->setLocale('id');
 
-        // Mengatur default string length untuk migration
         // Schema::defaultStringLength(191);
     }
 }

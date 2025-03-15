@@ -1,66 +1,159 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Timesheet API Project
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+This document outlines how to set up and use the API for the timesheet project.
 
-## About Laravel
+## Setup
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+1.  **Requirements:**
+    * PHP >= 8.1
+    * Composer
+    * MySQL
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+2.  **Clone the Project:**
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+    ```bash
+    git clone https://github.com/masrudmubarok/task-flow.git
+    cd task-flow
+    ```
 
-## Learning Laravel
+3.  **Install Composer Dependencies:**
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+    ```bash
+    composer install
+    ```
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+4.  **Copy the `.env` File:**
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+    ```bash
+    cp .env.example .env
+    ```
 
-## Laravel Sponsors
+5.  **Configure `.env`:**
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+    * Adjust database configurations like `DB_HOST`, `DB_USERNAME`, `DB_PASSWORD`, `DB_DATABASE`.
+    * Customize other configurations as needed.
 
-### Premium Partners
+6.  **Generate Application Key:**
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[WebReinvent](https://webreinvent.com/)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Jump24](https://jump24.co.uk)**
-- **[Redberry](https://redberry.international/laravel/)**
-- **[Active Logic](https://activelogic.com)**
-- **[byte5](https://byte5.de)**
-- **[OP.GG](https://op.gg)**
+    ```bash
+    php artisan key:generate
+    ```
 
-## Contributing
+7.  **Run Database Migrations:**
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+    ```bash
+    php artisan migrate
+    ```
 
-## Code of Conduct
+8.  **Run Seeders (Optional):**
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+    ```bash
+    php artisan db:seed
+    ```
 
-## Security Vulnerabilities
+9. **Start the Development Server:**
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+    ```bash
+    php artisan serve
+    ```
 
-## License
+## API Documentation
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+### Authentication
+
+* **Register:**
+    * `POST /api/register`
+    * Parameters: `first_name`, `last_name`, `email`, `password`
+* **Login:**
+    * `POST /api/login`
+    * Parameters: `email`, `password`
+* **Logout:**
+    * `POST /api/logout`
+    * Header: `Authorization: Bearer [token]`
+
+### Projects
+
+* **List Projects:**
+    * `GET /api/projects`
+* **Project Details:**
+    * `GET /api/projects/{id}`
+* **Create Project:**
+    * `POST /api/projects`
+    * Parameters: `name`, `status`, `attributes` (array)
+* **Update Project:**
+    * `PUT /api/projects/{id}`
+    * Parameters: `name`, `status`, `attributes` (array)
+* **Delete Project:**
+    * `DELETE /api/projects/{id}`
+* **Filter Projects:**
+    * `GET /api/projects/filter`
+    * Parameters: `name`, `status`, `start_date`, `end_date`, `department`, `sort_by`, `sort_order`
+
+### Timesheets
+
+* **List Timesheets:**
+    * `GET /api/timesheets`
+* **Timesheet Details:**
+    * `GET /api/timesheets/{id}`
+* **Create Timesheet:**
+    * `POST /api/timesheets`
+    * Parameters: `user_id`, `project_id`, `task_name`, `date`, `hours`
+* **Update Timesheet:**
+    * `PUT /api/timesheets/{id}`
+    * Parameters: `user_id`, `project_id`, `task_name`, `date`, `hours`
+* **Delete Timesheet:**
+    * `DELETE /api/timesheets/{id}`
+
+### Attributes
+
+* **List Attributes:**
+    * `GET /api/attributes`
+* **Attribute Details:**
+    * `GET /api/attributes/{id}`
+* **Create Attribute:**
+    * `POST /api/attributes`
+    * Parameters: `name`, `type`
+* **Update Attribute:**
+    * `PUT /api/attributes/{id}`
+    * Parameters: `name`, `type`
+* **Delete Attribute:**
+    * `DELETE /api/attributes/{id}`
+
+### Attribute Values
+
+* **List Attribute Values:**
+    * `GET /api/attribute-values`
+* **Attribute Value Details:**
+    * `GET /api/attribute-values/{id}`
+* **Create Attribute Value:**
+    * `POST /api/attribute-values`
+    * Parameters: `attribute_id`, `entity_id`, `value`
+* **Update Attribute Value:**
+    * `PUT /api/attribute-values/{id}`
+    * Parameters: `attribute_id`, `entity_id`, `value`
+* **Delete Attribute Value:**
+    * `DELETE /api/attribute-values/{id}`
+
+## API Testing with Postman
+
+1.  **Install Postman:**
+    * Download and install Postman from [www.getpostman.com](https://www.getpostman.com/).
+
+2.  **Import Postman Collection (Optional):**
+    * If a Postman collection file exists, import it into Postman.
+
+3.  **Test Authentication:**
+    * Use the `POST /api/register` endpoint to register a new user.
+    * Use the `POST /api/login` endpoint to obtain an authentication token.
+    * Copy the authentication token.
+    * Set the `Authorization: Bearer [token]` header for requests that require authentication.
+
+4.  **Test Other Endpoints:**
+    * Use the other API endpoints to test the application's functionality.
+    * Inspect the API responses to ensure the returned data is as expected.
+
+## Notes
+
+* Ensure the Laravel server is running while testing the API.
+* Adjust the `.env` configuration according to your environment.
+* This documentation may be updated to reflect changes to the API.

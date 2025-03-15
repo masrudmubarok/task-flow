@@ -31,10 +31,20 @@ class AuthController extends Controller
                 'email' => $request->email,
                 'password' => Hash::make($request->password),
             ]);
+
+            // Generate token for newly registered user
+            $token = $user->createToken('authToken')->accessToken;
     
-            return response()->json(['user' => $user, 'message' => 'Registration successful'], 201);
+            return response()->json([
+                'user' => $user,
+                'access_token' => $token,
+                'message' => 'Registration successful'
+            ], 201);
         } catch (\Exception $e) {
-            return response()->json(['message' => 'Internal Server Error', 'error' => $e->getMessage()], 500);
+            return response()->json([
+                'message' => 'Internal Server Error',
+                'error' => $e->getMessage()
+            ], 500);
         }
     }
 
@@ -55,13 +65,15 @@ class AuthController extends Controller
             if (Auth::attempt($credentials)) {
                 $user = Auth::user();
                 $token = $user->createToken('authToken')->accessToken;
-                return response()->json(['user' => $user, 'access_token' => $token]);
+                return response()->json([
+                    'user' => $user,
+                    'access_token' => $token
+                ]);
             }
 
             return response()->json(['message' => 'Unauthorized'], 401);
 
         } catch (\Exception $e) {
-            // Log the exception for debugging
             \Log::error('Login error: ' . $e->getMessage());
             return response()->json(['message' => 'Internal Server Error'], 500);
         }
