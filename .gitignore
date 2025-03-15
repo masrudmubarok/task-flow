@@ -1,23 +1,50 @@
-/.phpunit.cache
+# Laravel
+/vendor
 /node_modules
-/public/build
-/public/hot
 /public/storage
 /storage/*.key
 /storage/pail
-/vendor
+/bootstrap/cache/*
+/storage/logs/*
+/storage/framework/*
+/storage/debugbar
+/storage/oauth-private.key
+/storage/oauth-public.key
+
+# Laravel Environment Files
 .env
 .env.backup
 .env.production
-.phpactor.json
-.phpunit.result.cache
-Homestead.json
-Homestead.yaml
-npm-debug.log
-yarn-error.log
-/auth.json
-/.fleet
+
+# IDE & Editor Config Files
+/.phpunit.cache
+/.phpunit.result.cache
+/.phpstorm.meta.php
 /.idea
-/.nova
 /.vscode
+/.fleet
+/.nova
 /.zed
+
+# Composer & NPM Files
+/composer.lock
+/package-lock.json
+/yarn.lock
+/npm-debug.log
+/yarn-error.log
+/auth.json
+
+# Docker & Deployment Config (jika ada)
+/.docker
+/docker-compose.yml
+
+# Test Coverage Reports & Debugging Files
+/coverage/
+/phpunit.xml
+/tests/_output/
+
+/Homestead.json
+/Homestead.yaml
+
+# Laravel Nova (jika menggunakan Nova)
+/nova
