@@ -56,119 +56,125 @@ php artisan serve
 
 ## API Documentation
 
-### Authentication
-#### Register:
+# Authentication
+
+## Register:
 **POST** `/api/register`
 - Parameters: `first_name`, `last_name`, `email`, `password`
 
-#### Login:
+## Login:
 **POST** `/api/login`
 - Parameters: `email`, `password`
 
-#### Logout:
+## Logout:
 **POST** `/api/logout`
 - Header: `Authorization: Bearer [token]`
 
-### Projects
-#### List Projects:
+
+# Projects
+
+## List Projects:
 **GET** `/api/projects`
 - Header: `Authorization: Bearer [token]`
 
-#### Project Details:
+## Project Details:
 **GET** `/api/projects/{id}`
 - Header: `Authorization: Bearer [token]`
 
-#### Create Project:
+## Create Project:
 **POST** `/api/projects`
 - Header: `Authorization: Bearer [token]`
 - Parameters: `name`, `status`, `attributes` (array)
 
-#### Update Project:
+## Update Project:
 **PUT** `/api/projects/{id}`
 - Header: `Authorization: Bearer [token]`
 - Parameters: `name`, `status`, `attributes` (array)
 
-#### Delete Project:
+## Delete Project:
 **DELETE** `/api/projects/{id}`
 - Header: `Authorization: Bearer [token]`
 
-#### Filter Projects:
+## Filter Projects:
 **GET** `/api/projects/filter`
 - Header: `Authorization: Bearer [token]`
 - Parameters: `name`, `status`, `start_date`, `end_date`, `department`, `sort_by`, `sort_order`
 
-### Timesheets
-#### List Timesheets:
+
+# Timesheets
+
+## List Timesheets:
 **GET** `/api/timesheets`
 - Header: `Authorization: Bearer [token]`
 
-#### Timesheet Details:
+## Timesheet Details:
 **GET** `/api/timesheets/{id}`
 - Header: `Authorization: Bearer [token]`
 
-#### Create Timesheet:
+## Create Timesheet:
 **POST** `/api/timesheets`
 - Header: `Authorization: Bearer [token]`
 - Parameters: `user_id`, `project_id`, `task_name`, `date`, `hours`
 
-#### Update Timesheet:
+## Update Timesheet:
 **PUT** `/api/timesheets/{id}`
 - Header: `Authorization: Bearer [token]`
 - Parameters: `user_id`, `project_id`, `task_name`, `date`, `hours`
 
-#### Delete Timesheet:
+## Delete Timesheet:
 **DELETE** `/api/timesheets/{id}`
 - Header: `Authorization: Bearer [token]`
 
-### Attributes
-#### List Attributes:
+
+# Attributes
+
+## List Attributes:
 **GET** `/api/attributes`
 - Header: `Authorization: Bearer [token]`
 
-#### Attribute Details:
+## Attribute Details:
 **GET** `/api/attributes/{id}`
 - Header: `Authorization: Bearer [token]`
 
-#### Create Attribute:
+## Create Attribute:
 **POST** `/api/attributes`
 - Header: `Authorization: Bearer [token]`
 - Parameters: `name`, `type`
 
-#### Update Attribute:
+## Update Attribute:
 **PUT** `/api/attributes/{id}`
 - Header: `Authorization: Bearer [token]`
 - Parameters: `name`, `type`
 
-#### Delete Attribute:
+## Delete Attribute:
 **DELETE** `/api/attributes/{id}`
 - Header: `Authorization: Bearer [token]`
 
-### Attribute Values
-#### List Attribute Values:
+
+# Attribute Values
+
+## List Attribute Values:
 **GET** `/api/attribute-values`
 - Header: `Authorization: Bearer [token]`
 
-#### Attribute Value Details:
+## Attribute Value Details:
 **GET** `/api/attribute-values/{id}`
 - Header: `Authorization: Bearer [token]`
 
-#### Create Attribute Value:
+## Create Attribute Value:
 **POST** `/api/attribute-values`
 - Header: `Authorization: Bearer [token]`
 - Parameters: `attribute_id`, `entity_id`, `value`
 
-#### Update Attribute Value:
+## Update Attribute Value:
 **PUT** `/api/attribute-values/{id}`
 - Header: `Authorization: Bearer [token]`
 - Parameters: `attribute_id`, `entity_id`, `value`
 
-#### Delete Attribute Value:
+## Delete Attribute Value:
 **DELETE** `/api/attribute-values/{id}`
 - Header: `Authorization: Bearer [token]`
 
-### Test Other Endpoints:
-- Use the other API endpoints to test the application's functionality.
-- Inspect the API responses to ensure the returned data is as expected.
 
 ## Notes
 - Ensure the Laravel server is running while testing the API.
