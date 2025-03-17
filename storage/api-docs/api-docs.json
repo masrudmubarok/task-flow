@@ -228,9 +228,13 @@
                         "application/json": {
                             "schema": {
                                 "properties": {
-                                    "name": {
+                                    "first_name": {
                                         "type": "string",
-                                        "example": "John Doe"
+                                        "example": "John"
+                                    },
+                                    "last_name": {
+                                        "type": "string",
+                                        "example": "Doe"
                                     },
                                     "email": {
                                         "type": "string",
@@ -238,11 +242,6 @@
                                         "example": "johndoe@example.com"
                                     },
                                     "password": {
-                                        "type": "string",
-                                        "format": "password",
-                                        "example": "password123"
-                                    },
-                                    "password_confirmation": {
                                         "type": "string",
                                         "format": "password",
                                         "example": "password123"
@@ -615,6 +614,36 @@
                         }
                     },
                     {
+                        "name": "filters[project_id]",
+                        "in": "query",
+                        "description": "Filter by project ID",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 10
+                        }
+                    },
+                    {
+                        "name": "filters[hour][gt]",
+                        "in": "query",
+                        "description": "Filter timesheets where hours logged are greater than a certain value",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 5
+                        }
+                    },
+                    {
+                        "name": "filters[hour][lt]",
+                        "in": "query",
+                        "description": "Filter timesheets where hours logged are less than a certain value",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 10
+                        }
+                    },
+                    {
                         "name": "filters[date][gt]",
                         "in": "query",
                         "description": "Filter timesheets with date greater than",
@@ -832,12 +861,12 @@
     },
     "tags": [
         {
-            "name": "Authentication",
-            "description": "Endpoints for user authentication"
-        },
-        {
             "name": "Attribute",
             "description": "API Endpoints for Managing Attribute"
+        },
+        {
+            "name": "Authentication",
+            "description": "Endpoints for user authentication"
         },
         {
             "name": "Project",

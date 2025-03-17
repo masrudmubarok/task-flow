@@ -30,17 +30,20 @@ class Project extends Model
     public function scopeFilter($query, array $filters)
     {
         foreach ($filters as $key => $value) {
-            if (in_array($key, ['name', 'status'])) {
-                $query->where($key, 'LIKE', "%$value%");
+            if (is_array($value)) {
+                if (isset($value['like'])) {
+                    $query->where($key, 'LIKE', $value['like']);
+                } elseif (isset($value['gt'])) {
+                    $query->where($key, '>', $value['gt']);
+                }
+            } elseif (in_array($key, ['name', 'status'])) {
+                $query->where($key, $value);
             } else {
                 $query->whereHas('attributeValues', function ($q) use ($key, $value) {
-                    $q->where('attribute_id', function ($subQuery) use ($key) {
-                        $subQuery->select('id')->from('attributes')->where('name', $key);
-                    })->where('value', 'LIKE', "%$value%");
+                    $q->whereHas('attribute', fn($subQuery) => $subQuery->where('name', $key))
+                    ->where('value', 'LIKE', "%$value%");
                 });
             }
         }
-
-        return $query;
     }
 }

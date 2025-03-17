@@ -27,13 +27,22 @@ class Timesheet extends Model
 
     public function scopeFilter($query, array $filters)
     {
-        foreach ($filters as $key => $value) {
-            if ($key === 'task_name') {
-                $query->where($key, 'LIKE', "%$value%");
-            } else {
+        collect($filters)->each(function ($value, $key) use ($query) {
+            if (in_array($key, ['user_id', 'project_id'])) {
                 $query->where($key, $value);
+            } elseif ($key === 'task_name') {
+                $query->where($key, 'LIKE', "%$value%");
+            } elseif (is_array($value) && in_array($key, ['hours', 'date'])) {
+                foreach ($value as $operator => $val) {
+                    $query->where($key, match ($operator) {
+                        'gt' => '>',
+                        'lt' => '<',
+                        'eq' => '=',
+                        default => '=',
+                    }, $val);
+                }
             }
-        }
+        });
 
         return $query;
     }

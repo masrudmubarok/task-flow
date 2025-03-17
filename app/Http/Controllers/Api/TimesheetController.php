@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\TimesheetRequest;
+use App\Http\Resources\TimesheetResource;
 use App\Services\TimesheetService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -25,6 +27,7 @@ class TimesheetController extends Controller
      *     tags={"Timesheet"},
      *     summary="Get all timesheets with filtering",
      *     security={{"bearerAuth":{}}},
+
      *     @OA\Parameter(
      *         name="filters[user_id]",
      *         in="query",
@@ -33,12 +36,34 @@ class TimesheetController extends Controller
      *         @OA\Schema(type="integer", example=1)
      *     ),
      *     @OA\Parameter(
+     *         name="filters[project_id]",
+     *         in="query",
+     *         description="Filter by project ID",
+     *         required=false,
+     *         @OA\Schema(type="integer", example=10)
+     *     ),
+     *     @OA\Parameter(
+     *         name="filters[hour][gt]",
+     *         in="query",
+     *         description="Filter timesheets where hours logged are greater than a certain value",
+     *         required=false,
+     *         @OA\Schema(type="integer", example=5)
+     *     ),
+     *     @OA\Parameter(
+     *         name="filters[hour][lt]",
+     *         in="query",
+     *         description="Filter timesheets where hours logged are less than a certain value",
+     *         required=false,
+     *         @OA\Schema(type="integer", example=10)
+     *     ),
+     *     @OA\Parameter(
      *         name="filters[date][gt]",
      *         in="query",
      *         description="Filter timesheets with date greater than",
      *         required=false,
      *         @OA\Schema(type="string", format="date", example="2024-01-01")
      *     ),
+
      *     @OA\Response(response=200, description="Filtered list of timesheets"),
      *     @OA\Response(response=401, description="Unauthorized")
      * )
@@ -49,6 +74,7 @@ class TimesheetController extends Controller
         $timesheets = $this->timesheetService->getAll($filters);
         return response()->json(TimesheetResource::collection($timesheets));
     }
+
 
     /**
      * @OA\Get(
