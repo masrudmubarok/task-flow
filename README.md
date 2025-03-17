@@ -71,6 +71,19 @@ php artisan serve
 
 ## API Documentation
 
+### Testing API with Swagger UI
+To test the API using Swagger UI, go to:
+
+[Swagger UI](http://localhost:8000/)
+
+1. Navigate to the **Authentication** section and register a new user.
+2. Log in with the registered credentials.
+3. Copy the `access_token` from the login response.
+4. Click the **Authorize** button in Swagger UI and paste the token.
+5. Now, you can test other API endpoints.
+
+---
+
 ### Authentication
 
 #### Register
@@ -118,97 +131,66 @@ php artisan serve
 
 ---
 
-### Project
-
-#### List Projects
-**GET** /api/project
-- Header: Authorization: Bearer [token]
-
-#### Project Detail
-**GET** /api/project/{id}
-- Header: Authorization: Bearer [token]
-
-#### Create Project
-**POST** /api/project
-- Header: Authorization: Bearer [token]
-- Parameters: name, status, attributes (array)
-
-#### Update Project
-**PUT** /api/project/{id}
-- Header: Authorization: Bearer [token]
-- Parameters: name, status, attributes (array)
-
-#### Delete Project
-**DELETE** /api/project/{id}
-- Header: Authorization: Bearer [token]
-
-#### Filter Projects
-**GET** /api/project?filter
-- Header: Authorization: Bearer [token]
-- Parameters: name, status, start_date, end_date, department
----
-
 ### Timesheet
 
 #### List Timesheets
-**GET** /api/timesheet
-- Header: Authorization: Bearer [token]
+**GET** `/api/timesheet`
+- Header: `Authorization: Bearer [token]`
 
 #### Timesheet Detail
-**GET** /api/timesheet/{id}
-- Header: Authorization: Bearer [token]
+**GET** `/api/timesheet/{id}`
+- Header: `Authorization: Bearer [token]`
 
 #### Create Timesheet
-**POST** /api/timesheet
-- Header: Authorization: Bearer [token]
-- Parameters: user_id, project_id, task_name, date, hours
+**POST** `/api/timesheet`
+- Header: `Authorization: Bearer [token]`
+- Parameters: `user_id`, `project_id`, `task_name`, `date`, `hours`
 
 #### Update Timesheet
-**PUT** /api/timesheet/{id}
-- Header: Authorization: Bearer [token]
-- Parameters: user_id, project_id, task_name, date, hours
+**PUT** `/api/timesheet/{id}`
+- Header: `Authorization: Bearer [token]`
+- Parameters: `user_id`, `project_id`, `task_name`, `date`, `hours`
 
 #### Delete Timesheet
-**DELETE** /api/timesheet/{id}
-- Header: Authorization: Bearer [token]
+**DELETE** `/api/timesheet/{id}`
+- Header: `Authorization: Bearer [token]`
 
 #### Filter Timesheets
-**GET** /api/timesheet?filter
-- Header: Authorization: Bearer [token]
-- Parameters: user_id, project_id, task_name, date, hours
+**GET** `/api/timesheet?filter`
+- Header: `Authorization: Bearer [token]`
+- Parameters: `user_id`, `project_id`, `task_name`, `date`, `hours`
 
 ---
 
 ### Attribute
 
 #### List Attributes
-**GET** /api/attribute
-- Header: Authorization: Bearer [token]
-- Parameters: name, type, sort_by, sort_order
+**GET** `/api/attribute`
+- Header: `Authorization: Bearer [token]`
+- Parameters: `name`, `type`, `sort_by`, `sort_order`
 
 #### Attribute Detail
-**GET** /api/attribute/{id}
-- Header: Authorization: Bearer [token]
+**GET** `/api/attribute/{id}`
+- Header: `Authorization: Bearer [token]`
 
 #### Create Attribute
-**POST** /api/attribute
-- Header: Authorization: Bearer [token]
-- Parameters: name, type
+**POST** `/api/attribute`
+- Header: `Authorization: Bearer [token]`
+- Parameters: `name`, `type`
 
 #### Update Attribute
-**PUT** /api/attribute/{id}
-- Header: Authorization: Bearer [token]
-- Parameters: name, type
+**PUT** `/api/attribute/{id}`
+- Header: `Authorization: Bearer [token]`
+- Parameters: `name`, `type`
 
 #### Delete Attribute
-**DELETE** /api/attribute/{id}
-- Header: Authorization: Bearer [token]
+**DELETE** `/api/attribute/{id}`
+- Header: `Authorization: Bearer [token]`
 
 #### Filter Attributes
-**GET** /api/attribute?filter
-- Header: Authorization: Bearer [token]
-- Parameters: name, type
-
+**GET** `/api/attribute?filter`
+- Header: `Authorization: Bearer [token]`
+- Parameters: `name`, `type`
 
 ---
 

@@ -861,12 +861,12 @@
     },
     "tags": [
         {
-            "name": "Attribute",
-            "description": "API Endpoints for Managing Attribute"
-        },
-        {
             "name": "Authentication",
             "description": "Endpoints for user authentication"
+        },
+        {
+            "name": "Attribute",
+            "description": "API Endpoints for Managing Attribute"
         },
         {
             "name": "Project",
