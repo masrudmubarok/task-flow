@@ -48,6 +48,3 @@
 
 # Laravel Nova (jika menggunakan Nova)
 /nova
-
-# Other
-database/migrations/*_create_oauth_*.php

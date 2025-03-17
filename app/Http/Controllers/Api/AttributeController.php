@@ -3,59 +3,48 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Attribute\StoreAttributeRequest;
-use App\Http\Requests\Attribute\UpdateAttributeRequest;
-use App\Models\Attribute;
+use App\Http\Requests\AttributeRequest;
+use App\Services\AttributeService;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 
 class AttributeController extends Controller
 {
-    public function index(): JsonResponse
+    protected $attributeService;
+
+    public function __construct(AttributeService $attributeService)
     {
-        return response()->json(Attribute::all());
+        $this->attributeService = $attributeService;
     }
 
-    public function show(Attribute $attribute): JsonResponse
+    public function index(Request $request): JsonResponse
     {
+        $filters = $request->query();
+        $attributes = $this->attributeService->getAllAttributes($filters);
+        return response()->json($attributes);
+    }
+
+    public function getAttributeById($id): JsonResponse
+    {
+        $attribute = $this->attributeService->getAttributeById($id);
         return response()->json($attribute);
     }
 
-    public function store(StoreAttributeRequest $request): JsonResponse
+    public function addAttribute(AttributeRequest $request): JsonResponse
     {
-        try {
-            $attribute = Attribute::create($request->validated());
-            return response()->json($attribute, 201);
-        } catch (\Exception $e) {
-            return response()->json([
-                'message' => 'Something went wrong',
-                'error' => $e->getMessage(),
-            ], 500);
-        }
+        $attribute = $this->attributeService->createAttribute($request->validated());
+        return response()->json($attribute, 201);
     }
 
-    public function update(UpdateAttributeRequest $request, Attribute $attribute): JsonResponse
+    public function updateAttribute(AttributeRequest $request, $id): JsonResponse
     {
-        try {
-            $attribute->update($request->validated());
-            return response()->json($attribute);
-        } catch (\Exception $e) {
-            return response()->json([
-                'message' => 'Something went wrong',
-                'error' => $e->getMessage(),
-            ], 500);
-        }
+        $attribute = $this->attributeService->updateAttribute($id, $request->validated());
+        return response()->json($attribute);
     }
 
-    public function destroy(Attribute $attribute): JsonResponse
+    public function deleteAttribute($id): JsonResponse
     {
-        try {
-            $attribute->delete();
-            return response()->json(['message' => 'Attribute deleted successfully'], 200);
-        } catch (\Exception $e) {
-            return response()->json([
-                'message' => 'Failed to delete attribute',
-                'error' => $e->getMessage(),
-            ], 500);
-        }
+        $this->attributeService->deleteAttribute($id);
+        return response()->json(['message' => 'Attribute deleted successfully'], 200);
     }
 }

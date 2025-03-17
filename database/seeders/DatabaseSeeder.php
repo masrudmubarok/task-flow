@@ -13,7 +13,6 @@ class DatabaseSeeder extends Seeder
             ProjectSeeder::class,
             AttributeSeeder::class,
             TimesheetSeeder::class,
-            AttributeValueSeeder::class,
         ]);
     }
 }

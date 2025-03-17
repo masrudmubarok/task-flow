@@ -36,19 +36,14 @@ Customize other configurations as needed.
 php artisan key:generate
 ```
 
-### Run Database Migrations
+### Run Database Migrations & Seeders
 ```bash
-php artisan migrate
-```
-
-### Run Seeders (Optional)
-```bash
-php artisan db:seed
+php artisan migrate:fresh --seed
 ```
 
 ### Install Passport
 ```bash
-php artisan passport:install
+php artisan passport:client --personal
 ```
 
 ### Start the Development Server
@@ -76,111 +71,85 @@ php artisan serve
 
 ---
 
-### Projects
+### Project
 
 #### List Projects
-**GET** `/api/projects`
+**GET** `/api/project`
 - Header: `Authorization: Bearer [token]`
 
-#### Project Details
-**GET** `/api/projects/{id}`
+#### Project Detail
+**GET** `/api/project/{id}`
 - Header: `Authorization: Bearer [token]`
 
 #### Create Project
-**POST** `/api/projects`
+**POST** `/api/project`
 - Header: `Authorization: Bearer [token]`
 - Parameters: `name`, `status`, `attributes` (array)
 
 #### Update Project
-**PUT** `/api/projects/{id}`
+**PUT** `/api/project/{id}`
 - Header: `Authorization: Bearer [token]`
 - Parameters: `name`, `status`, `attributes` (array)
 
 #### Delete Project
-**DELETE** `/api/projects/{id}`
+**DELETE** `/api/project/{id}`
 - Header: `Authorization: Bearer [token]`
 
 #### Filter Projects
-**GET** `/api/projects/filter`
+**GET** `/api/project/filter`
 - Header: `Authorization: Bearer [token]`
 - Parameters: `name`, `status`, `start_date`, `end_date`, `department`, `sort_by`, `sort_order`
 
 ---
 
-### Timesheets
+### Timesheet
 
 #### List Timesheets
-**GET** `/api/timesheets`
+**GET** `/api/timesheet`
 - Header: `Authorization: Bearer [token]`
 
-#### Timesheet Details
-**GET** `/api/timesheets/{id}`
+#### Timesheet Detail
+**GET** `/api/timesheet/{id}`
 - Header: `Authorization: Bearer [token]`
 
 #### Create Timesheet
-**POST** `/api/timesheets`
+**POST** `/api/timesheet`
 - Header: `Authorization: Bearer [token]`
 - Parameters: `user_id`, `project_id`, `task_name`, `date`, `hours`
 
 #### Update Timesheet
-**PUT** `/api/timesheets/{id}`
+**PUT** `/api/timesheet/{id}`
 - Header: `Authorization: Bearer [token]`
 - Parameters: `user_id`, `project_id`, `task_name`, `date`, `hours`
 
 #### Delete Timesheet
-**DELETE** `/api/timesheets/{id}`
+**DELETE** `/api/timesheet/{id}`
 - Header: `Authorization: Bearer [token]`
 
 ---
 
-### Attributes
+### Attribute
 
 #### List Attributes
-**GET** `/api/attributes`
+**GET** `/api/attribute`
 - Header: `Authorization: Bearer [token]`
 
-#### Attribute Details
-**GET** `/api/attributes/{id}`
+#### Attribute Detail
+**GET** `/api/attribute/{id}`
 - Header: `Authorization: Bearer [token]`
 
 #### Create Attribute
-**POST** `/api/attributes`
+**POST** `/api/attribute`
 - Header: `Authorization: Bearer [token]`
 - Parameters: `name`, `type`
 
 #### Update Attribute
-**PUT** `/api/attributes/{id}`
+**PUT** `/api/attribute/{id}`
 - Header: `Authorization: Bearer [token]`
 - Parameters: `name`, `type`
 
 #### Delete Attribute
-**DELETE** `/api/attributes/{id}`
-- Header: `Authorization: Bearer [token]`
-
----
-
-### Attribute Values
-
-#### List Attribute Values
-**GET** `/api/attribute-values`
-- Header: `Authorization: Bearer [token]`
-
-#### Attribute Value Details
-**GET** `/api/attribute-values/{id}`
-- Header: `Authorization: Bearer [token]`
-
-#### Create Attribute Value
-**POST** `/api/attribute-values`
-- Header: `Authorization: Bearer [token]`
-- Parameters: `attribute_id`, `entity_id`, `value`
-
-#### Update Attribute Value
-**PUT** `/api/attribute-values/{id}`
-- Header: `Authorization: Bearer [token]`
-- Parameters: `attribute_id`, `entity_id`, `value`
-
-#### Delete Attribute Value
-**DELETE** `/api/attribute-values/{id}`
+**DELETE** `/api/attribute/{id}`
 - Header: `Authorization: Bearer [token]`
 
 ---

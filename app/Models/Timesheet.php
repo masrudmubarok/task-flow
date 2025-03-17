@@ -11,6 +11,10 @@ class Timesheet extends Model
 
     protected $fillable = ['user_id', 'project_id', 'task_name', 'date', 'hours'];
 
+    protected $casts = [
+        'date' => 'date:Y-m-d',
+    ];
+
     public function user()
     {
         return $this->belongsTo(User::class);
@@ -20,4 +24,18 @@ class Timesheet extends Model
     {
         return $this->belongsTo(Project::class);
     }
+
+    public function scopeFilter($query, array $filters)
+    {
+        foreach ($filters as $key => $value) {
+            if ($key === 'task_name') {
+                $query->where($key, 'LIKE', "%$value%");
+            } else {
+                $query->where($key, $value);
+            }
+        }
+
+        return $query;
+    }
+
 }

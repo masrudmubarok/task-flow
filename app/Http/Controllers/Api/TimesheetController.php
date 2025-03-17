@@ -3,79 +3,49 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Timesheet\StoreTimesheetRequest;
-use App\Http\Requests\Timesheet\UpdateTimesheetRequest;
-use App\Models\Timesheet;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
+use App\Http\Requests\TimesheetRequest;
+use App\Http\Resources\TimesheetResource;
+use App\Services\TimesheetService;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 
 class TimesheetController extends Controller
 {
-    public function index()
+    protected $timesheetService;
+
+    public function __construct(TimesheetService $timesheetService)
     {
-        $timesheets = Timesheet::paginate(10); // Menggunakan pagination agar lebih efisien
-        return response()->json($timesheets);
+        $this->timesheetService = $timesheetService;
     }
 
-    public function show(Timesheet $timesheet)
+    public function index(Request $request): JsonResponse
     {
-        return response()->json($timesheet);
+        $filters = $request->query();
+        $timesheets = $this->timesheetService->getAll($filters);
+        return response()->json(TimesheetResource::collection($timesheets));
     }
 
-    public function store(StoreTimesheetRequest $request)
+    public function getTimesheetById($id): JsonResponse
     {
-        DB::beginTransaction();
-        try {
-            $timesheet = Timesheet::create($request->validated());
-
-            DB::commit();
-            return response()->json($timesheet, 201);
-        } catch (\Exception $e) {
-            DB::rollBack();
-            Log::error('Timesheet Store Error: ' . $e->getMessage());
-
-            return response()->json([
-                'message' => 'Internal Server Error',
-                'error' => $e->getMessage(),
-            ], 500);
-        }
+        $timesheet = $this->timesheetService->getTimesheetById($id);
+        return response()->json(new TimesheetResource($timesheet));
     }
 
-    public function update(UpdateTimesheetRequest $request, Timesheet $timesheet)
+    public function addTimesheet(TimesheetRequest $request): JsonResponse
     {
-        DB::beginTransaction();
-        try {
-            $timesheet->update($request->validated());
-
-            DB::commit();
-            return response()->json($timesheet);
-        } catch (\Exception $e) {
-            DB::rollBack();
-            Log::error('Timesheet Update Error: ' . $e->getMessage());
-
-            return response()->json([
-                'message' => 'Internal Server Error',
-                'error' => $e->getMessage(),
-            ], 500);
-        }
+        $timesheet = $this->timesheetService->createTimesheet($request->validated());
+        return response()->json(new TimesheetResource($timesheet), 201);
     }
 
-    public function destroy(Timesheet $timesheet)
+    public function updateTimesheet(TimesheetRequest $request, $id): JsonResponse
     {
-        DB::beginTransaction();
-        try {
-            $timesheet->delete();
+        $timesheet = $this->timesheetService->updateTimesheet($id, $request->validated());
+        return response()->json(new TimesheetResource($timesheet));
+    }
 
-            DB::commit();
-            return response()->json(null, 204);
-        } catch (\Exception $e) {
-            DB::rollBack();
-            Log::error('Timesheet Delete Error: ' . $e->getMessage());
-
-            return response()->json([
-                'message' => 'Internal Server Error',
-                'error' => $e->getMessage(),
-            ], 500);
-        }
+    public function deleteTimesheet($id): JsonResponse
+    {
+        $this->timesheetService->deleteTimesheet($id);
+        return response()->json(['message' => 'Timesheet deleted successfully'], 200);
     }
 }

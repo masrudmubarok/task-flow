@@ -11,12 +11,12 @@ class ProjectSeeder extends Seeder
     {
         Project::create([
             'name' => 'Project A',
-            'status' => 'Active',
+            'status' => 'completed',
         ]);
 
         Project::create([
             'name' => 'Project B',
-            'status' => 'Pending',
+            'status' => 'pending',
         ]);
     }
 }

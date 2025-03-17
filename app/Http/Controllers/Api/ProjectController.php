@@ -3,133 +3,49 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Project\StoreProjectRequest;
-use App\Http\Requests\Project\UpdateProjectRequest;
-use App\Models\Project;
-use App\Models\AttributeValue;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
+use App\Http\Requests\ProjectRequest;
+use App\Http\Resources\ProjectResource;
+use App\Services\ProjectService;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 
 class ProjectController extends Controller
 {
-    public function index()
+    protected $projectService;
+
+    public function __construct(ProjectService $projectService)
     {
-        $projects = Project::with('attributeValues')->paginate(10);
-        return response()->json($projects);
+        $this->projectService = $projectService;
     }
 
-    public function show(Project $project)
+    public function index(Request $request): JsonResponse
     {
-        $project->load('attributeValues');
-        return response()->json($project);
+        $filters = $request->query();
+        $projects = $this->projectService->getAll($filters);
+        return response()->json(ProjectResource::collection($projects));
     }
 
-    public function store(StoreProjectRequest $request)
+    public function getProjectById($id): JsonResponse
     {
-        DB::beginTransaction();
-        try {
-            $project = Project::create($request->only('name', 'status'));
-
-            if ($request->has('attributes')) {
-                foreach ($request->attributes as $attributeData) {
-                    AttributeValue::create([
-                        'project_id' => $project->id,
-                        'attribute_id' => $attributeData['attribute_id'],
-                        'value' => $attributeData['value'],
-                    ]);
-                }
-            }
-
-            DB::commit();
-            return response()->json($project, 201);
-        } catch (\Exception $e) {
-            DB::rollBack();
-            Log::error('Project Store Error: ' . $e->getMessage());
-            return response()->json(['message' => 'Internal Server Error'], 500);
-        }
+        $project = $this->projectService->getProjectById($id);
+        return response()->json(new ProjectResource($project));
     }
 
-    public function update(UpdateProjectRequest $request, Project $project)
+    public function addProject(ProjectRequest $request): JsonResponse
     {
-        DB::beginTransaction();
-        try {
-            $project->update($request->only('name', 'status'));
-
-            if ($request->has('attributes')) {
-                $project->attributeValues()->delete(); // Hapus atribut lama
-
-                foreach ($request->attributes as $attributeData) {
-                    AttributeValue::create([
-                        'project_id' => $project->id,
-                        'attribute_id' => $attributeData['attribute_id'],
-                        'value' => $attributeData['value'],
-                    ]);
-                }
-            }
-
-            DB::commit();
-            return response()->json($project);
-        } catch (\Exception $e) {
-            DB::rollBack();
-            Log::error('Project Update Error: ' . $e->getMessage());
-            return response()->json(['message' => 'Internal Server Error'], 500);
-        }
+        $project = $this->projectService->createProject($request->validated());
+        return response()->json(new ProjectResource($project), 201);
     }
 
-    public function destroy(Project $project)
+    public function updateProject(ProjectRequest $request, $id): JsonResponse
     {
-        DB::beginTransaction();
-        try {
-            $project->delete();
-            DB::commit();
-            return response()->json(null, 204);
-        } catch (\Exception $e) {
-            DB::rollBack();
-            Log::error('Project Delete Error: ' . $e->getMessage());
-            return response()->json(['message' => 'Internal Server Error'], 500);
-        }
+        $project = $this->projectService->updateProject($id, $request->validated());
+        return response()->json(new ProjectResource($project));
     }
 
-    public function filter(Request $request)
+    public function deleteProject($id): JsonResponse
     {
-        $query = Project::query();
-
-        if ($request->has('name')) {
-            $query->where('name', 'like', '%' . $request->name . '%');
-        }
-
-        if ($request->has('status')) {
-            $query->where('status', $request->status);
-        }
-
-        if ($request->has('start_date') && $request->has('end_date')) {
-            $startDate = date('Y-m-d', strtotime($request->start_date));
-            $endDate = date('Y-m-d', strtotime($request->end_date));
-
-            if ($startDate <= $endDate) {
-                $query->whereBetween('created_at', [$startDate, $endDate]);
-            }
-        }
-
-        if ($request->has('department')) {
-            $query->whereHas('attributeValues', function ($q) use ($request) {
-                $q->where('value', $request->department)
-                    ->whereHas('attribute', function ($q) {
-                        $q->where('name', 'Department');
-                    });
-            });
-        }
-
-        if ($request->has('sort_by')) {
-            $sortOrder = $request->get('sort_order', 'asc');
-            if (!in_array($sortOrder, ['asc', 'desc'])) {
-                $sortOrder = 'asc';
-            }
-            $query->orderBy($request->sort_by, $sortOrder);
-        }
-
-        $projects = $query->paginate(10);
-
-        return response()->json($projects);
+        $this->projectService->deleteProject($id);
+        return response()->json(['message' => 'Project deleted successfully'], 200);
     }
 }
