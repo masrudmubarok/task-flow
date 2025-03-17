@@ -14,7 +14,7 @@ class AttributeService
         $this->attributeRepository = $attributeRepository;
     }
 
-    public function getAllAttributes(array $filters = [])
+    public function getAll(array $filters = [])
     {
         $attributes = $this->attributeRepository->getAll($filters);
         return AttributeResource::collection($attributes);

@@ -15,6 +15,7 @@ class ProjectResource extends JsonResource
             'attributes' => $this->attributeValues->map(function ($attributeValue) {
                 return [
                     'attribute_id' => $attributeValue->attribute_id,
+                    'name' => $attributeValue->attribute->name, // Menambahkan nama atribut
                     'value' => $attributeValue->value,
                 ];
             }),

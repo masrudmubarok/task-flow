@@ -38,17 +38,18 @@ class AuthService
         $user = $this->authRepository->findUserByEmail($credentials['email']);
 
         if (!$user || !Hash::check($credentials['password'], $user->password)) {
-            throw ValidationException::withMessages([
-                'email' => ['The provided credentials are invalid.']
-            ]);
+            abort(response()->json([
+                'message' => 'Invalid email or password',
+                'errors' => ['credential' => ['These credentials do not match our records.']]
+            ], 401));
         }
 
         $token = $user->createToken('authToken')->accessToken;
 
-        return [
+        return response()->json([
             'user' => $user,
             'access_token' => $token
-        ];
+        ], 200);
     }
 
     public function logout()
