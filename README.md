@@ -4,12 +4,28 @@ This document outlines how to set up and use the API for the timesheet project.
 
 ---
 
+## Project Summary
+
+This project implements a RESTful API for managing users, projects, timesheets, and dynamic project attributes using the Entity-Attribute-Value (EAV) pattern and Repository/Service pattern. It includes authentication, CRUD operations, and flexible filtering capabilities.
+
+**Key Features:**
+
+-   **Core Models & Relations:** User, Project, Timesheet with proper relationships.
+-   **EAV Implementation:** Dynamic attributes for Projects (department, start_date, end_date, etc.).
+-   **RESTful API:** Standard CRUD endpoints for all models.
+-   **Filtering:** Flexible filtering on both regular and EAV attributes.
+-   **Authentication:** Laravel Passport for secure API access.
+-   **Swagger Documentation:** Interactive API documentation via Swagger UI.
+
+---
+
 ## Setup
 
 ### Requirements
 - PHP >= 8.1
 - Composer 2.7.1
-- MySQL >= 8..0
+- MySQL >= 8.0
+- Swagger 3.0
 
 ### Clone the Project
 ```bash
@@ -96,61 +112,103 @@ php artisan serve
 - Header: `Authorization: Bearer [token]`
 
 #### Filter Projects
-**GET** `/api/project/filter`
+**GET** `/api/project?filter`
 - Header: `Authorization: Bearer [token]`
 - Parameters: `name`, `status`, `start_date`, `end_date`, `department`, `sort_by`, `sort_order`
 
 ---
 
+### Project
+
+#### List Projects
+**GET** /api/project
+- Header: Authorization: Bearer [token]
+
+#### Project Detail
+**GET** /api/project/{id}
+- Header: Authorization: Bearer [token]
+
+#### Create Project
+**POST** /api/project
+- Header: Authorization: Bearer [token]
+- Parameters: name, status, attributes (array)
+
+#### Update Project
+**PUT** /api/project/{id}
+- Header: Authorization: Bearer [token]
+- Parameters: name, status, attributes (array)
+
+#### Delete Project
+**DELETE** /api/project/{id}
+- Header: Authorization: Bearer [token]
+
+#### Filter Projects
+**GET** /api/project?filter
+- Header: Authorization: Bearer [token]
+- Parameters: name, status, start_date, end_date, department
+---
+
 ### Timesheet
 
 #### List Timesheets
-**GET** `/api/timesheet`
-- Header: `Authorization: Bearer [token]`
+**GET** /api/timesheet
+- Header: Authorization: Bearer [token]
 
 #### Timesheet Detail
-**GET** `/api/timesheet/{id}`
-- Header: `Authorization: Bearer [token]`
+**GET** /api/timesheet/{id}
+- Header: Authorization: Bearer [token]
 
 #### Create Timesheet
-**POST** `/api/timesheet`
-- Header: `Authorization: Bearer [token]`
-- Parameters: `user_id`, `project_id`, `task_name`, `date`, `hours`
+**POST** /api/timesheet
+- Header: Authorization: Bearer [token]
+- Parameters: user_id, project_id, task_name, date, hours
 
 #### Update Timesheet
-**PUT** `/api/timesheet/{id}`
-- Header: `Authorization: Bearer [token]`
-- Parameters: `user_id`, `project_id`, `task_name`, `date`, `hours`
+**PUT** /api/timesheet/{id}
+- Header: Authorization: Bearer [token]
+- Parameters: user_id, project_id, task_name, date, hours
 
 #### Delete Timesheet
-**DELETE** `/api/timesheet/{id}`
-- Header: `Authorization: Bearer [token]`
+**DELETE** /api/timesheet/{id}
+- Header: Authorization: Bearer [token]
+
+#### Filter Timesheets
+**GET** /api/timesheet?filter
+- Header: Authorization: Bearer [token]
+- Parameters: user_id, project_id, task_name, date, hours
 
 ---
 
 ### Attribute
 
 #### List Attributes
-**GET** `/api/attribute`
-- Header: `Authorization: Bearer [token]`
+**GET** /api/attribute
+- Header: Authorization: Bearer [token]
+- Parameters: name, type, sort_by, sort_order
 
 #### Attribute Detail
-**GET** `/api/attribute/{id}`
-- Header: `Authorization: Bearer [token]`
+**GET** /api/attribute/{id}
+- Header: Authorization: Bearer [token]
 
 #### Create Attribute
-**POST** `/api/attribute`
-- Header: `Authorization: Bearer [token]`
-- Parameters: `name`, `type`
+**POST** /api/attribute
+- Header: Authorization: Bearer [token]
+- Parameters: name, type
 
 #### Update Attribute
-**PUT** `/api/attribute/{id}`
-- Header: `Authorization: Bearer [token]`
-- Parameters: `name`, `type`
+**PUT** /api/attribute/{id}
+- Header: Authorization: Bearer [token]
+- Parameters: name, type
 
 #### Delete Attribute
-**DELETE** `/api/attribute/{id}`
-- Header: `Authorization: Bearer [token]`
+**DELETE** /api/attribute/{id}
+- Header: Authorization: Bearer [token]
+
+#### Filter Attributes
+**GET** /api/attribute?filter
+- Header: Authorization: Bearer [token]
+- Parameters: name, type
+
 
 ---
 
