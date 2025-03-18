@@ -74,7 +74,7 @@ php artisan serve
 ### Testing API with Swagger UI
 To test the API using Swagger UI, go to:
 
-[Swagger UI](http://localhost:8000/)
+http://localhost:8000/
 
 1. Navigate to the **Authentication** section and register a new user.
 2. Log in with the registered credentials.
